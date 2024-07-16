@@ -1,7 +1,7 @@
 name: Produce nutjs
 
 on:
-  workflow_display:
+  workflow_dispatch:
   push:
     branches:
       - master
