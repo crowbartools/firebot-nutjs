@@ -71,16 +71,19 @@ jobs:
         run: npm run compile
 
       - name: Download libnut-core Windows Build
+        uses: actions/download-artifact@v4
         with:
           name: libnut-Windows
           path: ./dist/lib/libnut-core/windows
 
       - name: Download libnut-core OSX Build
+        uses: actions/download-artifact@v4
         with:
           name: libnut-macOS
           path: ./dist/lib/libnut-core/osx
 
       - name: Download libnut-core Linux Build
+        uses: actions/download-artifact@v4
         with:
           name: libnut-linux
           path: ./dist/lib/libnut-core/linux
