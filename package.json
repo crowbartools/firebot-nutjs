@@ -1,6 +1,6 @@
 {
   "name": "firebot-nutjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "main": "index",
   "typings": "index",
@@ -10,8 +10,15 @@
     "url": "https://firebot.app"
   },
   "homepage": "https://firebot.app",
-  "os": [ "linux", "darwin", "win32" ],
-  "cpu": [ "x64", "arm64" ],
+  "os": [
+    "linux",
+    "darwin",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
   "scripts": {
     "compile": "tsc"
   },
