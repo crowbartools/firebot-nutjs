@@ -7,8 +7,43 @@ on:
       - master
 
 jobs:
+
+  checkversion:
+    name: Check if version has corrosponding tag
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      dobuild: ${{ steps.dobuild.outputs.dobuild }}
+
+    steps:
+      - name: Checkout firebot-nutjs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read package.json
+        id: package
+        uses: gregoranders/nodejs-project-info@v0.0.19
+
+      - name: Retrieve package.json version
+        id: version
+        run: echo "version=${{ steps.package.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: 'Check: package version has corrosponding git tag'
+        id: dobuild
+        shell: bash
+        run: echo dobuild=$(git show-ref --tags --verify --quiet -- "refs/tags/v${{ steps.version.outputs.version }}" && echo 0 || echo 1) >> $GITHUB_OUTPUT
+
+
+
+
   libnut-core:
     name: Build libnut-core for platforms
+
+    needs:
+      - checkversion
+
+    if: needs.checkversion.outputs.dobuild == 1
 
     strategy:
       matrix:
@@ -49,7 +84,10 @@ jobs:
     name: Build firebot-nutjs
 
     needs:
+      - checkversion
       - libnut-core
+
+    if: needs.checkversion.outputs.dobuild == 1
 
     runs-on: ubuntu-latest
 
@@ -74,30 +112,26 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: libnut-Windows
-          path: ./dist/lib/libnut-core/windows
+          path: ./lib/libnut-core/windows
 
       - name: Download libnut-core OSX Build
         uses: actions/download-artifact@v4
         with:
           name: libnut-macOS
-          path: ./dist/lib/libnut-core/osx
+          path: ./lib/libnut-core/osx
 
       - name: Download libnut-core Linux Build
         uses: actions/download-artifact@v4
         with:
           name: libnut-Linux
-          path: ./dist/lib/libnut-core/linux
+          path: ./lib/libnut-core/linux
 
-      - name: Copy Meta Files
-        run: |
-          cp ./package.json ./dist/package.json
-          cp ./LICENSE ./dist/LICENSE
-
-      - name: Upload Distribution Artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release branch
+        uses: EndBug/add-and-commit@v9
         with:
-          name: firebot-nutjs
-          path: ./dist/
+          message: 'new release'
+          tag: 'v${{ needs.checkversion.outputs.version }}'
+          new_branch: '${{ needs.checkversion.outputs.version }}'
 
 
 
