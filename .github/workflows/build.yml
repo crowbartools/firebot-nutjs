@@ -85,8 +85,8 @@ jobs:
       - name: Download libnut-core Linux Build
         uses: actions/download-artifact@v4
         with:
-          name: libnut-linux
-          path: ./dist/lib/libnut-core/Linux
+          name: libnut-Linux
+          path: ./dist/lib/libnut-core/linux
 
       - name: Copy Meta Files
         run: |
