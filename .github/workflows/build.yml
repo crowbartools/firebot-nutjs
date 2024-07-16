@@ -86,9 +86,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: libnut-linux
-          path: ./dist/lib/libnut-core/linux
+          path: ./dist/lib/libnut-core/Linux
 
-      # TODO: copy package & license into /dist
       - name: Copy Meta Files
         run: |
           cp ./package.json ./dist/package.json
