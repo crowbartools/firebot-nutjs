@@ -1,0 +1,112 @@
+name: Produce nutjs
+
+on:
+  workflow_display:
+  push:
+    branches:
+      - master
+
+jobs:
+  libnut-core:
+    name: Build libnut-core for platforms
+
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, macos-latest, windows-2019 ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      - name: Checkout libnut-core v2.5.1
+        uses: actions/checkout@v4
+        with:
+          repository: 'nut-tree/libnut-core'
+          ref: 'v2.5.1'
+
+      - name: Prepare Linux Environment
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
+        run: sudo apt-get install -y cmake libx11-dev zlib1g-dev libpng-dev libxtst-dev build-essential
+
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Project Dependencies
+        run: npm install
+
+      - name: Build libnut-core
+        run: npm run build:release
+
+      - name: Store Compiled libnut-core
+        uses: actions/upload-artifact@v4
+        with:
+          name: libnut-${{ runner.os }}
+          path: ./build/Release
+
+  firebot-nutjs:
+    name: Build firebot-nutjs
+
+    needs:
+      - libnut-core
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout firebot-nutjs
+        uses: actions/checkout@v4
+        with:
+          ref: 'master'
+
+      - name: Install nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Project Dependencies
+        run: npm install
+
+      - name: Transpile firebot-nutjs
+        run: npm run compile
+
+      - name: Download libnut-core Windows Build
+        with:
+          name: libnut-Windows
+          path: ./dist/lib/libnut-core/windows
+
+      - name: Download libnut-core OSX Build
+        with:
+          name: libnut-macOS
+          path: ./dist/lib/libnut-core/osx
+
+      - name: Download libnut-core Linux Build
+        with:
+          name: libnut-linux
+          path: ./dist/lib/libnut-core/linux
+
+      # TODO: copy package & license into /dist
+      - name: Copy Meta Files
+        run: |
+          cp ./package.json ./dist/package.json
+          cp ./LICENSE ./dist/LICENSE
+
+      - name: Upload Distribution Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firebot-nutjs
+          path: ./dist/
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,22 @@
+{
+  "name": "firebot-nutjs",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "main": "index",
+  "typings": "index",
+  "description": "Trimmed down version of nut.js v3.x",
+  "author": {
+    "name": "Crowbar Tools",
+    "url": "https://firebot.app"
+  },
+  "homepage": "https://firebot.app",
+  "os": [ "linux", "darwin", "win32" ],
+  "cpu": [ "x64", "arm64" ],
+  "scripts": {
+    "compile": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "16.7.10",
+    "typescript": "4.8.3"
+  }
+}
